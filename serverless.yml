@@ -1,0 +1,39 @@
+service: serverless-example
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-plugin-typescript
+  # - serverless-plugin-optimize
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    stageVariables:
+      foo: "bar"
+    # noPrependStageInUrl: true
+    # https://github.com/dougmoscrop/serverless-http/issues/86
+    # https://github.com/dougmoscrop/serverless-http/issues/86#issuecomment-627514571
+    # https://github.com/dherault/serverless-offline/issues/911
+    # https://github.com/dherault/serverless-offline/issues/88
+    # curl http://localhost:3000/dev/hello が curl http://localhost:3000/hello になる
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+
+functions:
+  main:
+    handler: src/main.handler
+    events:
+      - http:
+          path: '/'
+          method: ANY
+          cors: true
+      - http:
+          method: ANY
+          path: '{proxy+}'
+          cors: true
