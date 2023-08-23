@@ -4,7 +4,7 @@ frameworkVersion: "3"
 
 plugins:
   - serverless-plugin-typescript
-  # - serverless-plugin-optimize
+  - serverless-plugin-optimize
   - serverless-offline
 
 custom:
@@ -19,15 +19,42 @@ custom:
     # https://github.com/dherault/serverless-offline/issues/88
     # curl http://localhost:3000/dev/hello が curl http://localhost:3000/hello になる
 
+  serverlessPluginTypescript:
+    # tsConfigFileLocation: './tsconfig.lambda.json'
+    tsConfigFileLocation: './tsconfig.build.json'
+    #tsConfigFileLocation: './tsconfig.json'
+  defaultStage: dev
+  environment:
+    dev: ${file(./env/site-dev.yml)}
+    prod: ${file(./env/site-prod.yml)}
+
 provider:
   name: aws
   runtime: nodejs18.x
   region: us-east-1
-  stage: dev
+  stage: ${opt:stage, self:custom.defaultStage}
+
+package:
+  individually: true
+  patterns:
+    - '!src/**'
+    - '!test/**'
+    # - 'node_modules/**'
+  include:
+    #- src/** 
+    - dist/**
+    - node_modules
+  exclude:
+    # - '**'
+    # - src/**   pattersで先頭!で除外
+    # - test/**  pattersで先頭!で除外
+    - 'node_modules/.bin'
+    - 'node_modules/.bin/*'
+  excludeDevDependencies: true
 
 functions:
   main:
-    handler: src/main.handler
+    handler: dist/main.handler
     events:
       - http:
           path: '/'
