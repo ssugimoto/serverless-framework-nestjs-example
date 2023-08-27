@@ -40,16 +40,22 @@ package:
     - '!src/**'
     - '!test/**'
     # - 'node_modules/**'
-  include:
-    #- src/** 
     - dist/**
     - node_modules
-  exclude:
-    # - '**'
-    # - src/**   pattersで先頭!で除外
-    # - test/**  pattersで先頭!で除外
-    - 'node_modules/.bin'
-    - 'node_modules/.bin/*'
+    - '!node_modules/.bin'
+    - '!node_modules/.bin/*'
+
+  # Support for "package.include" and "package.exclude" will be removed in the next major release. Please use "package.patterns" instead
+  # include:
+  #   #- src/** 
+  #   - dist/**
+  #   - node_modules
+  # exclude:
+  #   # - '**'
+  #   # - src/**   pattersで先頭!で除外
+  #   # - test/**  pattersで先頭!で除外
+  #   - 'node_modules/.bin'
+  #   - 'node_modules/.bin/*'
   excludeDevDependencies: true
 
 functions:
